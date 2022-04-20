@@ -15,6 +15,8 @@ using ChargingStationApi.Handlers;
 using ChargingStationApi.Services;
 using ChargingStationApi.Repository;
 using ChargingStationApi.CosmosInitializers;
+using ChargingStationApi.Repository.Interfaces;
+using ChargingStationApi.CosmosInitializers.Interfaces;
 
 namespace ChargingStationApi
 {

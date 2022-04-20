@@ -6,6 +6,8 @@ namespace ChargingStationApi.Commands
 {
     public class GetChargingStationsCommand : IRequest<IActionResult>
     {
+        public string ProtocolVersion { get; set; }
+
         /// <summary>
         /// Gets or sets the query string parameters collection.
         /// </summary>

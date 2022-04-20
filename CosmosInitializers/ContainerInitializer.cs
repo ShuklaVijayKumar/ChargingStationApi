@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using ChargingStationApi.CosmosInitializers.Interfaces;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;

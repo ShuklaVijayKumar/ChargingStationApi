@@ -21,6 +21,11 @@ namespace ChargingStationApi.Controllers
         {
         }
 
+        /// <summary>
+        /// Method to create chargning station.
+        /// </summary>
+        /// <param name="postChargingStationModel"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> PostAnalysis(
             [FromBody] ChargingStationModel postChargingStationModel) => await this.ProcessRequest(
@@ -29,18 +34,23 @@ namespace ChargingStationApi.Controllers
                     PostChargingStationModel = postChargingStationModel,
                 });
 
+        /// <summary>
+        /// Method to get all charging stations.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Get() => await this.ProcessRequest(
+        public async Task<IActionResult> Get([FromQuery] string protocolVersion = null) => await this.ProcessRequest(
                 new GetChargingStationsCommand
                 {
                     QueryCollection = this.Request.Query,
+                    ProtocolVersion = protocolVersion,
                 });
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle([FromRoute] string id) => await this.ProcessRequest(
                 new GetChargingStationCommand
                 {
-                    Id = id,
+                    Id = id
                 });
 
         [HttpDelete("{id}")]

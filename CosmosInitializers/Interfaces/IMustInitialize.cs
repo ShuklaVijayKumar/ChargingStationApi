@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ChargingStationApi.CosmosInitializers
+namespace ChargingStationApi.CosmosInitializers.Interfaces
 {
     public interface IMustInitialize : IInitializer
     {

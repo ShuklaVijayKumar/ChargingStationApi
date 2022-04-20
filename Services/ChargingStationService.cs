@@ -1,6 +1,8 @@
 ﻿using Ardalis.GuardClauses;
+using ChargingStationApi.Commands;
 using ChargingStationApi.Models;
 using ChargingStationApi.Repository;
+using ChargingStationApi.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -27,15 +29,16 @@ namespace ChargingStationApi.Services
             return await this.repository.AddAsync(postChargingStationModel, postChargingStationModel.ProtocolVersion.ToString());
         }
 
-        public async Task<ObjectResult> GetChargingStationsAsync(IQueryCollection queryCollection)
+        public async Task<ObjectResult> GetChargingStationsAsync(GetChargingStationsCommand request)
         {
-            //Guard.Against.Null(queryCollection, nameof(queryCollection));
+            Guard.Against.Null(request, nameof(request));
+            Guard.Against.Null(request.QueryCollection, nameof(request.QueryCollection));
 
-            var top = queryCollection["top"];
-            var skip = queryCollection["skip"];
+            var top = request.QueryCollection["top"];
+            var skip = request.QueryCollection["skip"];
 
             // passing the default value for the simplicity.
-            return await this.repository.GetAllAsync(0, 20);
+            return await this.repository.GetAllAsync(0, 20, request.ProtocolVersion);
         }
 
         public async Task<ObjectResult> GetChargingStationAsync(string id)

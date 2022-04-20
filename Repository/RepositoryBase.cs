@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using ChargingStationApi.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
@@ -87,6 +88,24 @@ namespace ChargingStationApi.Repository
             this.logger.LogDebug(nameof(this.GetAllAsync));
 
             var query = this.container.Value.GetItemLinqQueryable<TEntity>();
+
+            var pagedQuery = this.SkipTopPagination(query, skip, top);
+
+            var items = await this.cosmosFeedReader.GetItems(pagedQuery, CosmosLinqExtensions.ToFeedIterator);
+
+            return CreateSuccessResponse(items);
+        }
+
+        /// <inheritdoc/>
+        public virtual async ValueTask<ObjectResult> GetAllAsync(
+            Expression<Func<TEntity, bool>> existsPredicate,
+            int? skip = null,
+            int? top = null)
+        {
+            this.logger.LogDebug(nameof(this.GetAllAsync));
+
+            var query = this.container.Value.GetItemLinqQueryable<TEntity>()
+                .Where(existsPredicate);
 
             var pagedQuery = this.SkipTopPagination(query, skip, top);
 

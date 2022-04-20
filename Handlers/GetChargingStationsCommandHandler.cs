@@ -27,7 +27,7 @@ namespace ChargingStationApi.Handlers
         {
             this.logger.LogDebug(nameof(this.Handle));
 
-            var svcResp = await this.chargingStationService.GetChargingStationsAsync(request.QueryCollection);
+            var svcResp = await this.chargingStationService.GetChargingStationsAsync(request);
 
             return new ObjectResult(svcResp)
             {

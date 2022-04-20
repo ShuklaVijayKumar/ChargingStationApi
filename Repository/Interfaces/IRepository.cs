@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace ChargingStationApi.Repository
+namespace ChargingStationApi.Repository.Interfaces
 {
     /// <summary>
     /// IRespository interface.
@@ -20,6 +20,7 @@ namespace ChargingStationApi.Repository
         /// <param name="top">Optional maximum number of items. This is always capped at the container resource item limit (regardless of the provided value), defined in the app configuration.</param>
         /// <returns>The resulting collection of entities.</returns>
         ValueTask<ObjectResult> GetAllAsync(
+            Expression<Func<TEntity, bool>> existsPredicate,
             int? skip = null,
             int? top = null);
 

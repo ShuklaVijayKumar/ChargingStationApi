@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ChargingStationApi.Repository
+namespace ChargingStationApi.Repository.Interfaces
 {
     public interface ICosmosFeedReader
     { /// <summary>

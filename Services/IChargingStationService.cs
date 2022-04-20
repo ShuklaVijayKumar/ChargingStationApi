@@ -1,4 +1,5 @@
-﻿using ChargingStationApi.Models;
+﻿using ChargingStationApi.Commands;
+using ChargingStationApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace ChargingStationApi.Services
     {
         Task<ObjectResult> CreateChargingStationAsync(ChargingStationModel postChargingStationModel);
 
-        Task<ObjectResult> GetChargingStationsAsync(IQueryCollection queryCollection);
+        Task<ObjectResult> GetChargingStationsAsync(GetChargingStationsCommand request);
 
         Task<ObjectResult> GetChargingStationAsync(string id);
 
