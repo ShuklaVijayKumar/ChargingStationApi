@@ -38,6 +38,7 @@ namespace ChargingStationApi
         {
 
             services.AddControllers();
+            services.AddMemoryCache();
             services
                 .AddMediatR(typeof(CreateChargingStationCommandHandler).GetTypeInfo().Assembly)
                 .AddScoped<IChargingStationService, ChargingStationService>()
