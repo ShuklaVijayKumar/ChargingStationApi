@@ -69,7 +69,7 @@ namespace ChargingStationApi.Repository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<ObjectResult> AddAsync(TEntity entity, string partitionKey)
+        public async ValueTask<ResponseTemplate<TEntity>> AddAsync(TEntity entity, string partitionKey)
         {
             this.logger.LogDebug(nameof(this.AddAsync));
             Guard.Against.Null(entity, nameof(entity));
@@ -77,11 +77,12 @@ namespace ChargingStationApi.Repository
             PartitionKey pk = new(partitionKey);
 
             ItemResponse<TEntity> response = await this.container.Value.UpsertItemAsync<TEntity>(entity, pk).ConfigureAwait(false);
-            return CreateSuccessResponse(response.Resource, response.StatusCode);
+
+            return CreateSuccessResponse<TEntity>(response.Resource, response.StatusCode);
         }
 
         /// <inheritdoc/>
-        public virtual async ValueTask<ObjectResult> GetAllAsync(
+        public virtual async ValueTask<ResponseTemplate<List<TEntity>>> GetAllAsync(
             int? skip = null,
             int? top = null)
         {
@@ -97,10 +98,10 @@ namespace ChargingStationApi.Repository
         }
 
         /// <inheritdoc/>
-        public virtual async ValueTask<ObjectResult> GetAllAsync(
-            Expression<Func<TEntity, bool>> existsPredicate,
+        public virtual async ValueTask<ResponseTemplate<List<TEntity>>> GetAllAsync(
             int? skip = null,
-            int? top = null)
+            int? top = null,
+            Expression<Func<TEntity, bool>> existsPredicate = null)
         {
             this.logger.LogDebug(nameof(this.GetAllAsync));
 
@@ -115,7 +116,7 @@ namespace ChargingStationApi.Repository
         }
 
         /// <inheritdoc/>
-        public virtual async ValueTask<ObjectResult> GetAsync(string id)
+        public virtual async ValueTask<ResponseTemplate<TEntity>> GetAsync(string id)
         {
             this.logger.LogDebug(nameof(this.GetAsync));
             Guard.Against.Null(id, nameof(id));
@@ -124,27 +125,28 @@ namespace ChargingStationApi.Repository
                 id,
                 new PartitionKey(id));
 
-            return CreateSuccessResponse(item.Resource, item.StatusCode);
+            return CreateSuccessResponse<TEntity>(item.Resource, item.StatusCode);
 
             // if item does not match specified predicate
             throw new CosmosException("Item not found", HttpStatusCode.NotFound, default, default, default);
         }
 
-        public async ValueTask<ObjectResult> DeleteAsync(string id)
+        public virtual async ValueTask<ResponseTemplate<TEntity>> DeleteAsync(string id)
         {
             this.logger.LogDebug(nameof(this.GetAsync));
             Guard.Against.Null(id, nameof(id));
 
             ItemResponse<TEntity> item = await this.container.Value.DeleteItemAsync<TEntity>(id, new PartitionKey(id));
 
-            return CreateSuccessResponse(item, item.StatusCode);
+            return CreateSuccessResponse<TEntity>(item.Resource, item.StatusCode);
         }
 
-        private static ObjectResult CreateSuccessResponse<T>(T data, HttpStatusCode statusCode = HttpStatusCode.OK)
+        private static ResponseTemplate<T> CreateSuccessResponse<T>(T data, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            return new ObjectResult(data)
+            return new ResponseTemplate<T>
             {
-                StatusCode = (int)statusCode
+                Data = data,
+                StatusCode = statusCode,
             };
         }
 

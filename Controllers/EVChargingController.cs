@@ -14,8 +14,6 @@ namespace ChargingStationApi.Controllers
     [Route("[controller]")]
     public class EVChargingController : AbstractRequestController
     {
-        private readonly ILogger<EVChargingController> _logger;
-
         public EVChargingController(IMediator mediator)
             : base(mediator)
         {

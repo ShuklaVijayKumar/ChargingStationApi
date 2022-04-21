@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChargingStationApi.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -19,30 +20,30 @@ namespace ChargingStationApi.Repository.Interfaces
         /// <param name="skip">Optional number of items to skip.</param>
         /// <param name="top">Optional maximum number of items. This is always capped at the container resource item limit (regardless of the provided value), defined in the app configuration.</param>
         /// <returns>The resulting collection of entities.</returns>
-        ValueTask<ObjectResult> GetAllAsync(
-            Expression<Func<TEntity, bool>> existsPredicate,
+        ValueTask<ResponseTemplate<List<TEntity>>> GetAllAsync(
             int? skip = null,
-            int? top = null);
+            int? top = null,
+            Expression<Func<TEntity, bool>> existsPredicate = null);
 
         /// <summary>
         /// Gets a single entity.
         /// </summary>
         /// <param name="id">The cosmos document identifier.</param>
         /// <returns>A single entity.</returns>
-        ValueTask<ObjectResult> GetAsync(string id);
+        ValueTask<ResponseTemplate<TEntity>> GetAsync(string id);
 
         /// <summary>
         /// Deletes a single entity.
         /// </summary>
         /// <param name="id">The cosmos document identifier.</param>
         /// <returns>Delete entity response.</returns>
-        ValueTask<ObjectResult> DeleteAsync(string id);
+        ValueTask<ResponseTemplate<TEntity>> DeleteAsync(string id);
 
         /// <summary>
         /// Creates a new entity.
         /// </summary>
         /// <param name="entity">The entity to be created.</param>
         /// <returns>The newly created entity.</returns>
-        ValueTask<ObjectResult> AddAsync(TEntity entity, string partitionKey);
+        ValueTask<ResponseTemplate<TEntity>> AddAsync(TEntity entity, string partitionKey);
     }
 }

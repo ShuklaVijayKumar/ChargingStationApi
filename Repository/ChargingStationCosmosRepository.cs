@@ -5,7 +5,9 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ChargingStationApi.Repository
@@ -25,44 +27,29 @@ namespace ChargingStationApi.Repository
                  "ChargingStations")
         {}
 
-        public virtual ValueTask<ObjectResult> AddAsync(ChargingStationModel entity, string partitionKey)
+        public new ValueTask<ResponseTemplate<RepoChargingStationEntity>> AddAsync(RepoChargingStationEntity entity, string partitionKey)
         {
-            RepoChargingStationEntity repoChargingStationEntity = new()
-            {
-                Id = Guid.NewGuid(),
-                csId = entity.csId,
-                Comment = entity.Comment,
-                GroupId = entity.GroupId,
-                Latitude = entity.Latitude,
-                Longitude = entity.Longitude,
-                Name = entity.Name,
-                OwnerId = entity.OwnerId,
-                ProtocolVersion = entity.ProtocolVersion,
-            };
-
-            return  base.AddAsync(repoChargingStationEntity, repoChargingStationEntity.Id.ToString());
+            return base.AddAsync(entity, entity.Id.ToString());
         }
 
-        public virtual ValueTask<ObjectResult> GetAllAsync(int? skip = null, int? top = null, string protocolVersion = null)
+        public override ValueTask<ResponseTemplate<RepoChargingStationEntity>> DeleteAsync(string id)
         {
-            if (!string.IsNullOrEmpty(protocolVersion))
-            {
-                Expression<Func<RepoChargingStationEntity, bool>> where = (RepoChargingStationEntity item) => item.ProtocolVersion == protocolVersion;
-                return base.GetAllAsync(where, skip, top);
-            }
-
-            return base.GetAllAsync(skip, top);
+            return base.DeleteAsync(id);
         }
 
-        // Method if more complex filter needed.
-        public virtual ValueTask<ObjectResult> GetAllAsync(Expression<Func<ChargingStationModel, bool>> existsPredicate, int? skip = null, int? top = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public new ValueTask<ObjectResult> GetAsync(string id)
+        public override ValueTask<ResponseTemplate<RepoChargingStationEntity>> GetAsync(string id)
         {
             return base.GetAsync(id);
+        }
+
+        public new ValueTask<ResponseTemplate<List<RepoChargingStationEntity>>> GetAllAsync(int? top, int? skip)
+        {
+            return base.GetAllAsync(top, skip);
+        }
+
+        public new ValueTask<ResponseTemplate<List<RepoChargingStationEntity>>> GetAllAsync(int? top, int? skip, Expression<Func<RepoChargingStationEntity, bool>> existsPredicate)
+        {
+            return base.GetAllAsync(top, skip, existsPredicate);
         }
     }
 }

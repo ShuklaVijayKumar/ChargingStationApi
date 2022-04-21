@@ -6,6 +6,9 @@ using ChargingStationApi.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ChargingStationApi.Services
@@ -21,34 +24,53 @@ namespace ChargingStationApi.Services
         {
             this.repository = Guard.Against.Null(repository, nameof(repository));
         }
-        
-        public async Task<ObjectResult> CreateChargingStationAsync(ChargingStationModel postChargingStationModel)
+
+        public async Task<ResponseTemplate<RepoChargingStationEntity>> CreateChargingStationAsync(ChargingStationModel postChargingStationModel)
         {
             Guard.Against.Null(postChargingStationModel, nameof(postChargingStationModel));
 
-            return await this.repository.AddAsync(postChargingStationModel, postChargingStationModel.ProtocolVersion.ToString());
+            RepoChargingStationEntity repoChargingStationEntity = new()
+            {
+                Id = Guid.NewGuid(),
+                csId = postChargingStationModel.csId,
+                Comment = postChargingStationModel.Comment,
+                GroupId = postChargingStationModel.GroupId,
+                Latitude = postChargingStationModel.Latitude,
+                Longitude = postChargingStationModel.Longitude,
+                Name = postChargingStationModel.Name,
+                OwnerId = postChargingStationModel.OwnerId,
+                ProtocolVersion = postChargingStationModel.ProtocolVersion,
+            };
+
+            return await this.repository.AddAsync(repoChargingStationEntity, repoChargingStationEntity.ProtocolVersion.ToString());
         }
 
-        public async Task<ObjectResult> GetChargingStationsAsync(GetChargingStationsCommand request)
+        public async Task<ResponseTemplate<RepoChargingStationEntity>> DeleteChargingStationAsync(string id)
+        {
+            return await this.repository.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task<ResponseTemplate<RepoChargingStationEntity>> GetChargingStationAsync(string id)
+        {
+            return await this.repository.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task<ResponseTemplate<List<RepoChargingStationEntity>>> GetChargingStationsAsync(GetChargingStationsCommand request)
         {
             Guard.Against.Null(request, nameof(request));
             Guard.Against.Null(request.QueryCollection, nameof(request.QueryCollection));
 
-            var top = request.QueryCollection["top"];
-            var skip = request.QueryCollection["skip"];
+            var top = 0; //request.QueryCollection["top"];
+            var skip = 20; //request.QueryCollection["skip"];
 
-            // passing the default value for the simplicity.
-            return await this.repository.GetAllAsync(0, 20, request.ProtocolVersion);
-        }
+            if (!string.IsNullOrEmpty(request.ProtocolVersion))
+            {
+                Expression<Func<RepoChargingStationEntity, bool>> where = (RepoChargingStationEntity item) => item.ProtocolVersion == request.ProtocolVersion;
 
-        public async Task<ObjectResult> GetChargingStationAsync(string id)
-        {
-            return await this.repository.GetAsync(id);
-        }
+                return await this.repository.GetAllAsync(0, 20, where);
+            }
 
-        public async Task<ObjectResult> DeleteChargingStationAsync(string id)
-        {
-            return await this.repository.DeleteAsync(id);
+            return await this.repository.GetAllAsync(0, 20);
         }
     }
 }

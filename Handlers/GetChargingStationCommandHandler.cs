@@ -31,7 +31,7 @@ namespace ChargingStationApi.Handlers
 
             return new ObjectResult(svcResp)
             {
-                StatusCode = svcResp.StatusCode,
+                StatusCode = (int)svcResp.StatusCode
             };
         }
     }
