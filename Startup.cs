@@ -17,6 +17,7 @@ using ChargingStationApi.Repository;
 using ChargingStationApi.CosmosInitializers;
 using ChargingStationApi.Repository.Interfaces;
 using ChargingStationApi.CosmosInitializers.Interfaces;
+using ChargingStationApi.Filters;
 
 namespace ChargingStationApi
 {
@@ -63,6 +64,8 @@ namespace ChargingStationApi
                     services.GetService<IConfiguration>(),
                     services.GetService<ILogger<ContainerInitializer>>(),
                     services.GetService<CosmosClient>()));
+            
+            services.AddMvc(options => options.Filters.Add(new ServiceExceptionInterceptor()));
 
             services.AddSwaggerGen(c =>
             {
