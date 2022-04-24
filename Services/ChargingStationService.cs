@@ -3,8 +3,6 @@ using ChargingStationApi.Commands;
 using ChargingStationApi.Models;
 using ChargingStationApi.Repository;
 using ChargingStationApi.Repository.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
@@ -33,9 +31,10 @@ namespace ChargingStationApi.Services
         public async Task<ResponseTemplate<RepoChargingStationEntity>> CreateChargingStationAsync(ChargingStationModel postChargingStationModel)
         {
             // Cacheing can be implemented e.g. in Get Single
-
+            // FluentValidation can be used here to validate the payload.
             Guard.Against.Null(postChargingStationModel, nameof(postChargingStationModel));
 
+            // Automapper can be used here
             RepoChargingStationEntity repoChargingStationEntity = new()
             {
                 Id = Guid.NewGuid(),
